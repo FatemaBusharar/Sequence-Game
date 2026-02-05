@@ -1,0 +1,119 @@
+Getting Started for players
+Open the Game – open and set it up on your device to begin your Sequence adventure.
+Launch the Sequence app on your phone.
+Choose Single Player or Multiplayer.
+Select the number of players or join an online room
+Setup Your Hand
+Each player receives a set of cards.
+Check your cards carefully – plan your strategy!
+The game will show whose turn is first.
+Take Your Turn
+Tap a card in your hand.
+Place it on the board by tapping the corresponding spot.
+Your goal: form a row of five consecutive cards (horizontally, vertically, or diagonally).
+Block Opponents
+Watch other players’ moves.
+Use your cards to block their sequences while completing your own.
+Draw a New Card
+After placing a card, you automatically get a new one from the deck.
+Keep your hand full for the next turn.
+Win the Game
+Be the first to complete a sequence of five cards.
+Celebrate your victory and challenge friends to a rematch!
+
+
+START GAME
+INITIALIZE game
+    CREATE deck of cards
+    SHUFFLE deck
+    CREATE board (10x10)
+
+    CREATE Player1
+        Player1.marker = "X"
+        Player1.score = 0
+        Player1.hand = empty
+
+    CREATE Player2
+        Player2.marker = "O"
+        Player2.score = 0
+        Player2.hand = empty
+
+    SET currentPlayer = Player1
+    SET HAND_PAPER_SIZE =7
+
+DEAL initial cards
+    FOR each player
+        DRAW HAND_PAPER_SIZE cards from deck into player.hand
+
+FUNCTION isBoardFull(board)
+    FOR each cell in board
+        IF cell is empty
+            RETURN false
+    RETURN true
+END FUNCTION
+
+FUNCTION isValidMove(card, position)
+    IF position matches card AND position is empty
+        RETURN true
+    ELSE
+        RETURN false
+END FUNCTION
+
+FUNCTION checkNewSequence(board, player)
+    FOR each possible group of 5 cells
+        IF all cells contain player.marker
+           AND sequence not previously counted
+            MARK sequence as counted
+            RETURN true
+    RETURN false
+END FUNCTION
+
+ON card tap → select card
+ON board tap → place marker if valid
+
+GAME LOOP
+    WHILE board is NOT full
+
+        DISPLAY board
+        DISPLAY currentPlayer hand
+        DISPLAY scores (Player1, Player2)
+
+        WAIT for currentPlayer input
+            SELECT card from hand
+            SELECT position on board
+
+        IF move is valid THEN
+            PLACE currentPlayer.marker on board
+            REMOVE selected card from currentPlayer.hand
+
+            IF deck is NOT empty
+                DRAW 1 card into currentPlayer.hand
+
+            CHECK for new sequences
+                IF a new sequence of 5 is formed
+                    INCREASE currentPlayer.score by 1
+                    MARK sequence as counted
+        ELSE
+            SHOW "Invalid move"
+            CONTINUE turn
+
+        SWITCH turn
+            IF currentPlayer == Player1
+                currentPlayer = Player2
+            ELSE
+                currentPlayer = Player1
+
+END LOOP
+
+END GAME
+    DISPLAY final scores
+    IF Player1.score > Player2.score
+        DECLARE Player1 winner
+    ELSE IF Player2.score > Player1.score
+        DECLARE Player2 winner
+    ELSE
+        DECLARE draw
+
+OFFER restart or exit
+
+END GAME
