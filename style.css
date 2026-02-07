@@ -1,3 +1,7 @@
-body{
-    background-color: blue;
+body {
+  background: #5b5f5e;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
