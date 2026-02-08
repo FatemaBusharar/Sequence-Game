@@ -7,18 +7,36 @@
   <link rel="stylesheet" href="../CSS/setUp.css">
 </head>
 <body>
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Sequence Game</h1>
+            <p>Think ahead. Block smart. Build your sequence.</p>
+        </div>
+    </header>
+    
+    <main class="wrapper">
+        <section class="section-title">
+            <h2>Getting Started And Add Players</h2>
+            <p>play and master the Sequence board</p>
+        </section>
 
-<h1> Adds Players NickNames</h1>
+        <div id="players-container">
+            <div class="player-input">
+                <label> Enter Your NickName</label>
+                <input type="text" placeholder="Player Name 1">
+            </div>
 
-<div id="players-container">
-  <div class="player-input"><input type="text" placeholder="Player Name 1"></div>
-  <div class="player-input"><input type="text" placeholder="Player Name 2"></div>
-</div>
+            <div class="player-input">
+                <label> Enter Your NickName</label>
+                <input type="text" placeholder="Player Name 2">
+            </div>
 
-<button id="add-player">add another Players</button>
-<button id="start-game">Start Game</button>
+        </div>
 
-<div class="error" id="error-msg"></div>
+        <button id="add-player">add another Players</button>
+        <button id="start-game">Start Game</button>
+        <div class="error" id="error-msg"></div>
+    </main>
 
 </body>
 </html>
