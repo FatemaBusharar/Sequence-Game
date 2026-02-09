@@ -40,8 +40,8 @@ body {
 }
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(10, 70px);
-  grid-template-rows: repeat(10, 100px);
+  grid-template-columns: repeat(10, 80px);
+  grid-template-rows: repeat(10, 120px);
   gap: 6px;
   justify-content: center; 
   align-content: center;
@@ -50,8 +50,29 @@ body {
 }
 
 .card {
-  width: 70px;
-  height: 100px;
+  width: 80px;
+  height: 120px;
+  background: white;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  font-weight: bold;
+}
+
+.cards-player{
+display: grid;
+  grid-template-columns: repeat(7, 80px);
+  grid-template-rows: repeat(7, 120px);
+  gap: 6px;
+  /* justify-content: center; 
+  align-content: center;
+  width: max-content; 
+  margin: 0 auto;  */
+}
+
+.cardp {
+    width: 80px;
+  height: 120px;
   background: white;
   border-radius: 8px;
   position: relative;
@@ -85,3 +106,4 @@ body {
   right: 5px;
   transform: rotate(180deg);
 }
+

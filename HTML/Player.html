@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="../CSS/player.css" >
     <script defer src="../JAVA/board.js"></script>
     <script defer src="../JAVA/deck.js"></script>
-    <script defer src="../JAVA/main.js"></script>    
+    <script defer src="../JAVA/player.js"></script>
+
     <title>Sequence game</title>
 </head>
 <body>
@@ -16,11 +17,10 @@
             <p>Think ahead. Block smart. Build your sequence.</p>
         </div>
     </header>
-    <h2>Player 1</h2>
-    <div class="hand" id="player1-hand"></div>
-    <h2>Player 2</h2>
-    <div class="hand" id="player2-hand"></div>
-    <hr>
+    <button id="resetGame">Restart Game</button>
+    <p id="status">'s Gose First !</p>
+    <div class="player-info-container"></div>
     <div class="cards-container" id="cards-container"> </div>
+    <div id="winnerOverlay"><span id="winnerText"></span></div>
 </body>
 </html>

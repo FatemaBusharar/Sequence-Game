@@ -28,7 +28,7 @@ for (let i = 0; i < 100; i++) {
     const card = document.createElement('div')
     card.className = `card`
     if (freePosition.includes(i)){
-        card.innerHTML = `<div class='center'>Free</div>`
+        card.innerHTML = `<div class='center'>⚝</div>`
     }
     else{
         const currentCard = boardCard.pop()
@@ -36,7 +36,7 @@ for (let i = 0; i < 100; i++) {
         card.innerHTML = `
         <div class='corner top'>${currentCard.value} ${currentCard.suit}</div>
         <div class='center'>${currentCard.suit}</div>
-        <div class='corner bottom'>${currentCard.value} ${currentCard.suit}</div>` 
+        <div class='corner bottom'>${currentCard.value} ${currentCard.suit}</div>`
     }
   board.appendChild(card)
 }
