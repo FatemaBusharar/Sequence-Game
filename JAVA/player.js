@@ -1,16 +1,11 @@
 window.addEventListener('DOMContentLoaded', () => {
-
     const playerNames = JSON.parse(localStorage.getItem('playerNames')) || []
     const playersContainer = document.querySelector('.player-info-container')
     const status = document.getElementById('status')
-    const boardCards = document.querySelectorAll('.board-card')
-
     const playerColors = ['red', 'blue', 'green', 'yellow']
+
     let currentPlayer = 0
     let selectedCard = null
-    let gameOver = false
-
-    const boardState = Array(100).fill(null)
 
     const players = playerNames.map(name => ({
         name,
@@ -20,112 +15,182 @@ window.addEventListener('DOMContentLoaded', () => {
 
     players.forEach(player => {
         for (let i = 0; i < 7; i++) {
-            if (cardDeck.length) player.cards.push(cardDeck.pop())
+            if (cardDeck.length > 0) player.cards.push(cardDeck.pop())
         }
     })
+    
+    function getBoardGrid() {
+        const board = document.querySelectorAll('.board-card')
+        let grid = []
+        for (let i = 0; i < 10; i++) {
+            grid[i] = []
+            for (let j = 0; j < 10; j++) {
+                grid[i][j] = board[i * 10 + j]
+            }
+        }
+        return grid
+    }
+
+    function checkSequencesFromCell(r, c, color, playerName, tempPlacement = false) {
+        const grid = getBoardGrid()
+        let sequencesFound = 0
+
+        function checkDirection(dr, dc) {
+            for (let k = -4; k <= 0; k++) {
+                let cells = []
+                for (let i = 0; i < 5; i++) {
+                    let nr = r + (k + i) * dr
+                    let nc = c + (k + i) * dc
+                    if (nr < 0 || nr >= 10 || nc < 0 || nc >= 10) break
+                    let cell = grid[nr][nc]
+                    let hasColor = cell.classList.contains(color) || (tempPlacement && nr === r && nc === c)
+                    if (!hasColor) break
+                    if (!tempPlacement && cell.dataset['sequenceOwner'] === playerName) break
+                    cells.push(cell)
+                }
+                if (cells.length === 5) {
+                    if (!tempPlacement) cells.forEach(cell => cell.dataset['sequenceOwner'] = playerName)
+                    sequencesFound++
+                }
+            }
+        }
+
+        checkDirection(0, 1)
+        checkDirection(1, 0)
+        checkDirection(1, 1)
+        checkDirection(1, -1)
+
+        return sequencesFound
+    }
+
+    function isBoardFull() {
+        const boardCards = document.querySelectorAll('.board-card')
+        return [...boardCards].every(card =>
+            card.classList.contains('taken') ||
+            card.classList.contains('free')
+        )
+    }
+
+    function canPlayerPlay(player) {
+        const freeBoard = document.querySelectorAll('.board-card:not(.taken):not(.free)')
+        return player.cards.some(card => {
+            return [...freeBoard].some(boardCard =>
+                boardCard.dataset.value === card.value &&
+                boardCard.dataset.suit === card.suit
+            )
+        })
+    }
+
+    function endGame() {
+        let winner = players.reduce((a, b) => a.score > b.score ? a : b)
+        alert(`Winner is ${winner.name} with ${winner.score} points`)
+    }
 
     function renderPlayers() {
         playersContainer.innerHTML = ''
-
-        players.forEach((player, pIndex) => {
+        players.forEach((player, index) => {
             const div = document.createElement('div')
             div.className = 'player-info'
             div.innerHTML = `
                 <h2>${player.name}</h2>
                 <p>Score: ${player.score}</p>
-                <p>Cards: ${player.cards.length}</p>
-                <div class="cards-player"></div>
+                <p>Cards: <span id="count-${index}">${player.cards.length}</span></p>
+                <div class="cards-player" id="cards-${index}"></div>
             `
             playersContainer.appendChild(div)
-
             const cardsDiv = div.querySelector('.cards-player')
 
-            player.cards.forEach((card, cIndex) => {
+            player.cards.forEach((card, i) => {
                 const c = document.createElement('div')
                 c.className = `cardp ${card.color}`
                 c.dataset.value = card.value
                 c.dataset.suit = card.suit
-                c.dataset.player = pIndex
-                c.dataset.index = cIndex
+                c.dataset.index = i
+                c.dataset.player = index
                 c.innerHTML = `
                     <div class='corner top'>${card.value} ${card.suit}</div>
                     <div class='center'>${card.suit}</div>
                     <div class='corner bottom'>${card.value} ${card.suit}</div>
                 `
                 cardsDiv.appendChild(c)
-
-                c.onclick = () => {
-                    if (pIndex !== currentPlayer || gameOver) return
+                c.addEventListener('click', () => {
+                    if (index !== currentPlayer) return
                     document.querySelectorAll('.cardp').forEach(x => x.classList.remove('selected'))
                     c.classList.add('selected')
                     selectedCard = c
-                }
+                    updateHints()
+                })
             })
         })
-
         status.textContent = `${players[currentPlayer].name}'s Turn`
     }
 
-    function checkWin(color) {
-        const dirs = [[1,0],[0,1],[1,1],[1,-1]]
+    function updateHints() {
+        document.querySelectorAll('.board-card').forEach(card => card.classList.remove('hint-highlight'))
+        if (!selectedCard) return
+        const p = Number(selectedCard.dataset.player)
+        const playerColor = playerColors[p]
+        const playerName = players[p].name
+        const grid = getBoardGrid()
 
-        for (let i = 0; i < 100; i++) {
-            if (boardState[i] !== color) continue
-
-            const r = Math.floor(i / 10)
-            const c = i % 10
-
-            for (let [dx, dy] of dirs) {
-                let cells = [i]
-                for (let s = 1; s < 5; s++) {
-                    const nr = r + dx * s
-                    const nc = c + dy * s
-                    if (nr < 0 || nr > 9 || nc < 0 || nc > 9) break
-                    const ni = nr * 10 + nc
-                    if (boardState[ni] === color) cells.push(ni)
-                    else break
-                }
-                if (cells.length === 5) {
-                    cells.forEach(i => boardCards[i].classList.add('sequence'))
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
-    boardCards.forEach((bCard, index) => {
-        bCard.onclick = () => {
-            if (!selectedCard || gameOver) return
-            if (bCard.classList.contains('taken') || bCard.classList.contains('free')) return
-
+        document.querySelectorAll('.board-card').forEach(boardCard => {
+            if (boardCard.classList.contains('taken') || boardCard.classList.contains('free')) return
             if (
-                bCard.dataset.value !== selectedCard.dataset.value ||
-                bCard.dataset.suit !== selectedCard.dataset.suit
+                boardCard.dataset.value !== selectedCard.dataset.value ||
+                boardCard.dataset.suit !== selectedCard.dataset.suit
             ) return
 
-            bCard.classList.add('taken', playerColors[currentPlayer])
-            boardState[index] = playerColors[currentPlayer]
-
-            const p = Number(selectedCard.dataset.player)
-            const i = Number(selectedCard.dataset.index)
-            players[p].cards.splice(i, 1)
-
-            if (checkWin(playerColors[currentPlayer])) {
-                document.getElementById('winnerText').textContent =
-                    `${players[currentPlayer].name} Wins!`
-                document.getElementById('winnerOverlay').style.display = 'flex'
-                gameOver = true
-                return
-            }
-
-            currentPlayer = (currentPlayer + 1) % players.length
-            selectedCard = null
-            renderPlayers()
-        }
-    })
-
-    document.getElementById('resetGame').onclick = () => location.reload()
+            let r = [...grid].findIndex(row => row.includes(boardCard))
+            let c = grid[r].indexOf(boardCard)
+            const seq = checkSequencesFromCell(r, c, playerColor, playerName, true)
+            if (seq >= 0) boardCard.classList.add('hint-highlight')
+        })
+    }
 
     renderPlayers()
+
+    document.querySelectorAll('.board-card').forEach(boardCard => {
+        boardCard.addEventListener('click', () => {
+            if (!selectedCard) return
+            if (boardCard.classList.contains('taken')) return
+            if (boardCard.classList.contains('free')) return
+            if (
+                boardCard.dataset.value !== selectedCard.dataset.value ||
+                boardCard.dataset.suit !== selectedCard.dataset.suit
+            ) return
+
+            const p = Number(selectedCard.dataset.player)
+            const playerColor = playerColors[p]
+            const playerName = players[p].name
+            boardCard.classList.add('taken', playerColor)
+
+            const i = Number(selectedCard.dataset.index)
+            players[p].cards.splice(i, 1) 
+
+            const grid = getBoardGrid()
+            let r = [...grid].findIndex(row => row.includes(boardCard))
+            let c = grid[r].indexOf(boardCard)
+            const seq = checkSequencesFromCell(r, c, playerColor, playerName)
+            if (seq > 0) players[p].score += seq * 100
+
+            selectedCard = null
+            currentPlayer = (currentPlayer + 1) % players.length
+
+            if (!canPlayerPlay(players[currentPlayer])) {
+                while (players[currentPlayer].cards.length < 7 && cardDeck.length > 0) {
+                    players[currentPlayer].cards.push(cardDeck.pop())
+                }
+            }
+
+            document.querySelectorAll('.board-card').forEach(card => card.classList.remove('hint-highlight'))
+            renderPlayers()
+            updateHints()
+
+            if (isBoardFull()) endGame()
+        })
+    })
+
+    document.getElementById('resetGame').onclick = () => {
+        location.reload()
+    }
 })
