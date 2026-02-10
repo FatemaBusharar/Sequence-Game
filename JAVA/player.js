@@ -2,6 +2,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const playerNames = JSON.parse(localStorage.getItem('playerNames')) || []
     const playersContainer = document.querySelector('.player-info-container')
     const status = document.getElementById('status')
+    const boardState = Array(100).fill(null)
 
     const playerColors = ['red', 'blue', 'green', 'yellow']
     let currentPlayer = 0
@@ -74,6 +75,8 @@ window.addEventListener('DOMContentLoaded', () => {
             ) return
 
             boardCard.classList.add('taken', playerColors[currentPlayer])
+            const index = document.querySelectorAll('.board-card').indexOf(boardCard)
+            boardState[index] = playerColors[currentPlayer]
 
             const p = Number(selectedCard.dataset.player)
             const i = Number(selectedCard.dataset.index)
@@ -85,6 +88,38 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     })
 
+    function checkWin(playerColor) {
+        const directions = [
+            [1, 0],
+            [0, 1],
+            [1, 1],
+            [1, -1]
+        ]
+        for (let i = 0; i < 100; i++) {
+            if (boardState[i] !== playerColor) continue
+            const row = Math.floor(i / 10)
+            const col = i % 10
+            for (let [dx, dy] of directions) {
+                let count = 1
+                let cells = [i]
+                for (let step = 1; step < 5; step++) {
+                    const r = row + dx * step
+                    const c = col + dy * step
+                    if (r < 0 || r > 9 || c < 0 || c > 9) break
+                    const idx = r * 10 + c
+                    if (boardState[idx] === playerColor) {
+                        count++
+                        cells.push(idx)
+                    } else break
+                }
+                if (count === 5) {
+                    drawLine(cells)
+                    return true
+                }
+            }
+        }
+        return false
+    }
     document.getElementById('resetGame').onclick = () => {
         location.reload()
     }
