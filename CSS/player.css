@@ -107,3 +107,30 @@ display: grid;
   transform: rotate(180deg);
 }
 
+.selected{
+  outline:3px solid gold;
+}
+
+.card.taken::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.card.taken.red::after {
+    background-color: red;
+}
+
+.card.taken.blue::after {
+    background-color: blue;
+}
+
+.card.taken.green::after {
+    background-color: green;
+}
+
+.card.taken.yellow::after {
+    background-color: gold;
+}

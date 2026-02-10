@@ -1,5 +1,5 @@
 console.log('Game')
-
+window.addEventListener('DOMContentLoaded', () => {
 const board = document.getElementById('cards-container')
 
 const suits = [
@@ -46,3 +46,4 @@ for (let i = 0; i < 100; i++) {
 
     board.appendChild(card)
 }
+})
