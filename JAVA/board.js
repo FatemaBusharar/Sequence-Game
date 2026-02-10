@@ -26,17 +26,23 @@ const freePosition = [0,9,90,99]
 
 for (let i = 0; i < 100; i++) {
     const card = document.createElement('div')
-    card.className = `card`
-    if (freePosition.includes(i)){
+    card.className = 'card board-card'
+
+    if (freePosition.includes(i)) {
+        card.classList.add('free')
         card.innerHTML = `<div class='center'>⚝</div>`
-    }
-    else{
+    } else {
         const currentCard = boardCard.pop()
+        card.dataset.value = currentCard.value
+        card.dataset.suit = currentCard.suit
+
         card.classList.add(currentCard.color)
         card.innerHTML = `
-        <div class='corner top'>${currentCard.value} ${currentCard.suit}</div>
-        <div class='center'>${currentCard.suit}</div>
-        <div class='corner bottom'>${currentCard.value} ${currentCard.suit}</div>`
+            <div class='corner top'>${currentCard.value} ${currentCard.suit}</div>
+            <div class='center'>${currentCard.suit}</div>
+            <div class='corner bottom'>${currentCard.value} ${currentCard.suit}</div>
+        `
     }
-  board.appendChild(card)
+
+    board.appendChild(card)
 }
