@@ -14,8 +14,8 @@ function updatePlayerNumbers() {
 }
 
 addPlayerBtn.addEventListener('click', () => {
-  if(playerCount >= 12){
-    alert('Maximum number of players is 12')
+  if(playerCount >= 4){
+    alert('Maximum number of players is 4')
     return
   }
 
