@@ -12,10 +12,22 @@ function updatePlayerNumbers() {
   })
   playerCount = inputs.length
 }
-
+function showMessage(text, duration = 2000) {
+  let overlay = document.getElementById('message-overlay')
+    if (!overlay) {
+      overlay = document.createElement('div')
+      overlay.id = 'message-overlay'
+      document.body.appendChild(overlay)
+    }
+    overlay.textContent = text
+    overlay.classList.add('show')
+    setTimeout(() => {
+    overlay.classList.remove('show')
+    }, duration)
+}
 addPlayerBtn.addEventListener('click', () => {
   if(playerCount >= 4){
-    alert('Maximum number of players is 4')
+    showMessage('Maximum number of players is 4')
     return
   }
 

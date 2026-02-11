@@ -22,9 +22,9 @@ suits.forEach(suit =>{
 
 boardCard.sort(()=> Math.random() - 0.5)
 
-const freePosition = [0,9,90,99]
+const freePosition = [0,14,90,104]
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 105; i++) {
     const card = document.createElement('div')
     card.className = 'card board-card'
 
