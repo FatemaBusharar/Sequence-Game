@@ -29,7 +29,9 @@ for (let i = 0; i < 105; i++) {
     card.className = 'card board-card'
 
     if (freePosition.includes(i)) {
-        card.classList.add('free')
+        card.classList.add('free','joker-cell')
+        card.dataset.value ='JOKER'
+        card.dataset.suit ='gold'
         card.innerHTML = `<div class='center'>⚝</div>`
     } else {
         const currentCard = boardCard.pop()

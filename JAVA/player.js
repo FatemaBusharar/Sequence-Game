@@ -9,6 +9,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const drawBtn = document.getElementById('drawCardBtn')
     const ROWS = 15
     const COLS = 6
+
     let turnTime = 15
     let timerInterval
     let currentPlayer = 0
@@ -20,6 +21,12 @@ window.addEventListener('DOMContentLoaded', () => {
         score: 0,
         cards: []
     }))
+
+    const JOKER_COUNT = 4
+    for (let i = 0; i < JOKER_COUNT; i++) {
+        cardDeck.push({ value: 'JOKER', suit: '★', color: 'gold', joker: true })
+    }
+    cardDeck.sort(() => Math.random() - 0.5)
 
     players.forEach(player => {
         for (let i = 0; i < 7; i++) {
@@ -104,12 +111,13 @@ window.addEventListener('DOMContentLoaded', () => {
         if (!overlay) {
             overlay = document.createElement('div')
             overlay.id = 'message-overlay'
-            overlay.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0,0,0,0.85); color: white; padding: 20px 40px; font-size: 20px; border-radius: 10px; z-index: 9999; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;'
             document.body.appendChild(overlay)
         }
         overlay.textContent = text
-        overlay.style.opacity = '1'
-        setTimeout(() => overlay.style.opacity = '0', duration)
+        overlay.classList.add('show')
+        setTimeout(() => {
+            overlay.classList.remove('show')
+        }, duration)
     }
 
     function startTurnTimer() {
@@ -122,7 +130,7 @@ window.addEventListener('DOMContentLoaded', () => {
             timerEl.textContent = `Time: ${timeLeft}s`
             if (timeLeft <= 0) {
                 clearInterval(timerInterval)
-                showMessage(`${players[currentPlayer].name}'s time ran out! Turn skipped.`)
+                showMessage(`${players[currentPlayer].name}'s time ran out! Your Turn skipped.`)
                 nextPlayer()
             }
         }, 1000)
@@ -154,7 +162,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 c.dataset.index = i
                 c.dataset.player = index
                 if (index !== currentPlayer) c.classList.add('disabled')
-                c.innerHTML = `<div class='corner top'>${card.value} ${card.suit}</div><div class='center'>${card.suit}</div><div class='corner bottom'>${card.value} ${card.suit}</div>`
+                if (card.joker) c.classList.add('joker')
+                c.innerHTML = card.joker ? `<div class='center'>★</div>` : `<div class='corner top'>${card.value} ${card.suit}</div><div class='center'>${card.suit}</div><div class='corner bottom'>${card.value} ${card.suit}</div>`
                 cardsDiv.appendChild(c)
                 c.addEventListener('click', () => {
                     if (index !== currentPlayer) return

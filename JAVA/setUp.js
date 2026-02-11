@@ -22,7 +22,7 @@ function showMessage(text, duration = 2000) {
     overlay.textContent = text
     overlay.classList.add('show')
     setTimeout(() => {
-    overlay.classList.remove('show')
+      overlay.classList.remove('show')
     }, duration)
 }
 addPlayerBtn.addEventListener('click', () => {
