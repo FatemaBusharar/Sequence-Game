@@ -32,7 +32,7 @@ for (let i = 0; i < 105; i++) {
         card.classList.add('free','joker-cell')
         card.dataset.value ='JOKER'
         card.dataset.suit ='gold'
-        card.innerHTML = `<div class='center'>⚝</div>`
+        card.innerHTML = `<div class='center'>★</div>`
     } else {
         const currentCard = boardCard.pop()
         card.dataset.value = currentCard.value

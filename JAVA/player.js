@@ -22,12 +22,6 @@ window.addEventListener('DOMContentLoaded', () => {
         cards: []
     }))
 
-    const JOKER_COUNT = 4
-    for (let i = 0; i < JOKER_COUNT; i++) {
-        cardDeck.push({ value: 'JOKER', suit: '★', color: 'gold', joker: true })
-    }
-    cardDeck.sort(() => Math.random() - 0.5)
-
     players.forEach(player => {
         for (let i = 0; i < 7; i++) {
             if (cardDeck.length > 0) player.cards.push(cardDeck.pop())
@@ -57,9 +51,13 @@ window.addEventListener('DOMContentLoaded', () => {
                 for (let i = 0; i < 5; i++) {
                     let nr = r + (k + i) * dr
                     let nc = c + (k + i) * dc
-                    if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) { valid = false; break }
+                    if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) { 
+                        valid = false 
+                        break }
                     let cell = grid[nr][nc]
-                    if (!cell.classList.contains(color)) { valid = false; break }
+                    if (!cell.classList.contains(color)) { 
+                        valid = false 
+                        break }
                     cells.push(cell)
                 }
                 if (!valid) continue
@@ -118,7 +116,7 @@ window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             overlay.classList.remove('show')
         }, duration)
-    }
+}
 
     function startTurnTimer() {
         clearInterval(timerInterval)
@@ -130,7 +128,7 @@ window.addEventListener('DOMContentLoaded', () => {
             timerEl.textContent = `Time: ${timeLeft}s`
             if (timeLeft <= 0) {
                 clearInterval(timerInterval)
-                showMessage(`${players[currentPlayer].name}'s time ran out! Your Turn skipped.`)
+                showMessage(`${players[currentPlayer].name}'s time ran out! Turn skipped.`)
                 nextPlayer()
             }
         }, 1000)
@@ -161,9 +159,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 c.dataset.suit = card.suit
                 c.dataset.index = i
                 c.dataset.player = index
-                if (index !== currentPlayer) c.classList.add('disabled')
-                if (card.joker) c.classList.add('joker')
-                c.innerHTML = card.joker ? `<div class='center'>★</div>` : `<div class='corner top'>${card.value} ${card.suit}</div><div class='center'>${card.suit}</div><div class='corner bottom'>${card.value} ${card.suit}</div>`
+                if (index !== currentPlayer){
+                    c.classList.add('disabled','face-down')
+                    c.innerHTML = `<div class='center'></div>`
+                }
+                    c.innerHTML = `<div class='corner top'>${card.value} ${card.suit}</div><div class='center'>${card.suit}</div><div class='corner bottom'>${card.value} ${card.suit}</div>`
                 cardsDiv.appendChild(c)
                 c.addEventListener('click', () => {
                     if (index !== currentPlayer) return
@@ -207,11 +207,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
     drawBtn.addEventListener('click', () => {
         const player = players[currentPlayer]
-        if (player.cards.length >= 7) { showMessage('You already have 7 cards, cannot draw more'); return }
+        if (player.cards.length >= 7) { 
+            showMessage('You already have 7 cards, cannot draw more') 
+            return }
         const freeBoard = document.querySelectorAll('.board-card:not(.taken):not(.free)')
         const playableCards = player.cards.filter(card => [...freeBoard].some(boardCard => boardCard.dataset.value === card.value && boardCard.dataset.suit === card.suit))
-        if (playableCards.length > 0) { showMessage('You still have playable cards'); return }
-        if (cardDeck.length === 0) { showMessage('No more cards in the deck to draw'); return }
+        if (playableCards.length > 0) { 
+            showMessage('You still have playable cards') 
+            return }
+        if (cardDeck.length === 0) { 
+            showMessage('No more cards in the deck to draw') 
+            return }
         player.cards.push(cardDeck.pop())
         renderPlayers()
     })
