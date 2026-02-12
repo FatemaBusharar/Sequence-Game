@@ -8,7 +8,7 @@
 ***
 
 ### ***Description***
-#### Challenge your mind with fun and engaging puzzles! Solve levels by matching, arranging, or thinking logically. Each stage gets harder, testing your strategy and problem-solving skills. Perfect for quick play or hours of brain-teasing fun!
+#### Challenge your strategy with this thrilling card game! Match and place cards on a dynamic board to form sequences of four, outmaneuvering opponents under time pressure. Each turn ramps up the excitement, testing your logical thinking and quick decisions. Ideal for fast-paced fun or extended competitive play!
 ***
 
 ### ***Technologies Used***
@@ -45,11 +45,14 @@
 * let your Score rises quickly
 * Celebrate your victory and challenge friends to a rematch!
 
-### ***Puzzle Images***
+### ***Seuence Game Images***
 
 ##### Game Screenshots
+##### Instruction page
 ![Instruction page](./GameScreenshots/1.png)
+##### Player registration page
 ![Player registration page](./GameScreenshots/2.png)
+##### Play area page
 ![Play area page](./GameScreenshots/3.png)
 
 
@@ -58,9 +61,9 @@
 - [ ] Online Multiplayer – Challenge friends or random players anywhere in real time.
 - [ ] AI Opponents – Play solo with Easy, Medium, and Hard difficulty levels.
 - [ ] Custom Themes & Cards – Change board colors, card designs, and backgrounds.
-- [ ] Sound Effects & Animations – More engaging feedback for moves and sequences.
 - [ ] Leaderboards & Achievements – Track high scores, win streaks, and unlock badges.
 - [ ] Team Mode – Play in teams for 4-player cooperative challenges.
 - [ ] Special Cards & Power-Ups – Add twists to your strategy with wild cards and bonuses.
+- [x] Sound Effects & Animations – More engaging feedback for moves and sequences.
 - [x] Hints & Tools Updated – Refined hints and power-ups to help players solve tricky Sequence more effectively.
 ***
