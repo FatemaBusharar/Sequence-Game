@@ -1,21 +1,37 @@
+// Wait for the DOM content to load before executing the game logic
 window.addEventListener('DOMContentLoaded', () => {
 
+    // Retrieve player names from localStorage or use an empty array if none exist
     const playerNames = JSON.parse(localStorage.getItem('playerNames')) || []
+    // Get the container for displaying player information
     const playersContainer = document.querySelector('.player-info-container')
+    // Get the status element to show whose turn it is
     const status = document.getElementById('status')
+    // Define colors for players
     const playerColors = ['red', 'blue', 'green', 'yellow']
+    // Get elements to display deck and sequence counts
     const deckCountEl = document.getElementById('deck-count')
     const sequenceCountEl = document.getElementById('sequence-count')
+    // Get the draw card button
     const drawBtn = document.getElementById('drawCardBtn')
+    // Define board dimensions
     const ROWS = 15
     const COLS = 7
+    // Get the sound element for timer alerts
+    const SSound = document.getElementById('2S')
 
+    // Set initial turn time in seconds
     let turnTime = 15
+    // Variable to hold the timer interval
     let timerInterval
+    // Index of the current player
     let currentPlayer = 0
+    // Currently selected card by the player
     let selectedCard = null
+    // Total number of sequences formed
     let totalSequences = 0
 
+    // Create player objects with name, score, cards, and placed positions
     const players = playerNames.map(name => ({
         name,
         score: 0,
@@ -23,15 +39,19 @@ window.addEventListener('DOMContentLoaded', () => {
         placedPositions: []  
     }))
 
+    // Deal 7 cards to each player from the deck
     players.forEach(player => {
         for (let i = 0; i < 7; i++) {
             if (cardDeck.length > 0) player.cards.push(cardDeck.pop())
         }
     })
 
+    // Update the deck count display
     deckCountEl.textContent = cardDeck.length
+    // Update the sequence count display
     sequenceCountEl.textContent = totalSequences
 
+    // Function to get row and column coordinates of a board card
     function getCellCoordinates(boardCard) {
         const index = [...document.querySelectorAll('.board-card')].indexOf(boardCard)
         const r = Math.floor(index / COLS)
@@ -39,18 +59,21 @@ window.addEventListener('DOMContentLoaded', () => {
         return { r, c }
     }
 
+    // Function to check for sequences formed by a player at a specific cell
     function checkSequencesFromCell(r, c, playerName) {
         const player = players.find(p => p.name === playerName)
         console.log(`Checking sequences for ${playerName} at (${r}, ${c}), placedPositions: ${JSON.stringify(player.placedPositions)}`)
         let sequencesFound = 0
         const positions = player.placedPositions
         const countedSequences = new Set()  
+        // Define directions to check for sequences (horizontal, vertical, diagonal)
         const directions = [
             { dr: 0, dc: 1 },  
             { dr: 1, dc: 0 },  
             { dr: 1, dc: 1 },  
             { dr: 1, dc: -1 } 
         ]
+        // Check each direction for sequences of 4 cards
         directions.forEach(({ dr, dc }) => {
             for (let i = 0; i < positions.length; i++) {
                 const pos1 = positions[i]
@@ -71,6 +94,7 @@ window.addEventListener('DOMContentLoaded', () => {
         return sequencesFound
     }
 
+    // Function to highlight possible placement hints for the selected card
     function updateHints() {
         document.querySelectorAll('.board-card').forEach(card => card.classList.remove('hint-highlight'))
         if (!selectedCard) return
@@ -81,17 +105,20 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+    // Function to check if the board is full
     function isBoardFull() {
         const boardCards = document.querySelectorAll('.board-card')
         return [...boardCards].every(card => card.classList.contains('taken') || card.classList.contains('free'))
     }
 
+    // Function to check if a player can make a move
     function canPlayerPlay(player) {
         const freeBoard = document.querySelectorAll('.board-card:not(.taken):not(.free)')
         if (freeBoard.length === 0) return false
         return player.cards.some(card => [...freeBoard].some(boardCard => boardCard.dataset.value === card.value && boardCard.dataset.suit === card.suit))
     }
 
+    // Function to end the game and announce the winner
     function endGame() {
         console.log(`End game: checking scores...`)
         players.forEach(player => console.log(`${player.name}: ${player.score}`))
@@ -99,6 +126,7 @@ window.addEventListener('DOMContentLoaded', () => {
         alert(`Winner is ${winner.name} with ${winner.score} points`)
     }
 
+    // Function to show a temporary message overlay
     function showMessage(text, duration = 2000) {
         let overlay = document.getElementById('message-overlay')
         if (!overlay) {
@@ -113,14 +141,22 @@ window.addEventListener('DOMContentLoaded', () => {
         }, duration)
     }
 
+    // Function to start the turn timer
     function startTurnTimer() {
         clearInterval(timerInterval)
+        soundPlayed = false
         let timeLeft = turnTime
         const timerEl = document.getElementById('timer')
         timerEl.textContent = `Time: ${timeLeft}s`
         timerInterval = setInterval(() => {
             timeLeft--
             timerEl.textContent = `Time: ${timeLeft}s`
+
+            if(timeLeft<= 5 && timeLeft !==0 &&!soundPlayed){
+                SSound.currentTime = 0
+                SSound.play()
+                soundPlayed = true
+            }
             if (timeLeft <= 0) {
                 clearInterval(timerInterval)
                 showMessage(`${players[currentPlayer].name}'s time ran out! Turn skipped.`)
@@ -129,6 +165,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 1000)
     }
 
+    // Function to move to the next player's turn
     function nextPlayer() {
         selectedCard = null
         currentPlayer = (currentPlayer + 1) % players.length
@@ -136,6 +173,7 @@ window.addEventListener('DOMContentLoaded', () => {
         startTurnTimer()
     }
 
+    // Function to render the player information and cards
     function renderPlayers() {
         playersContainer.innerHTML = ''
         players.forEach((player, index) => {
@@ -176,6 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
         sequenceCountEl.textContent = totalSequences
     }
 
+    // Add click event listeners to board cards for placing cards
     document.querySelectorAll('.board-card').forEach(boardCard => {
         boardCard.addEventListener('click', () => {
             if (!selectedCard) return
@@ -209,6 +248,7 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     })
 
+    // Add click event listener to the draw card button
     drawBtn.addEventListener('click', () => {
         const player = players[currentPlayer]
         if (player.cards.length >= 7) { 
@@ -231,6 +271,7 @@ window.addEventListener('DOMContentLoaded', () => {
         renderPlayers()
     })
 
+    // Add click event listener to the reset game button
     document.getElementById('resetGame').onclick = () => {
         document.querySelectorAll('.board-card').forEach(card => {
             card.dataset.sequenceOwner = ''  
@@ -240,6 +281,7 @@ window.addEventListener('DOMContentLoaded', () => {
         location.reload()
     }
 
+    // Initial render of players and start the timer
     renderPlayers()
     startTurnTimer()
 })

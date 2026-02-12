@@ -94,8 +94,8 @@ body {
 .player-info-container {
   display: flex;
   gap: 25px;
-  flex-wrap: wrap;
   justify-content: left;
+  overflow-x: auto;
 }
 
 .player-info {
@@ -278,7 +278,7 @@ body {
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  font-size: 55px; /* كبير وواضح */
+  font-size: 55px; 
   font-weight: 700;
   color: #f8fafc;
   text-align: center;
@@ -331,9 +331,13 @@ body {
 }
 
 .hint-highlight {
-  outline: 3px solid #22c55e;
-  box-shadow: 0 0 12px #22c55e;
-  transform: scale(1.05);
+  outline: 3px solid #15fa3f;
+  box-shadow:
+    0 0 10px #07e00a,
+    0 0 20px #07e00a,
+    0 0 30px rgba(26, 145, 6, 0.7);
+  transform: scale(1.07);
+  transition: all 0.2s ease;  
 }
 
 /* =====================

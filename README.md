@@ -48,9 +48,9 @@
 ### ***Puzzle Images***
 
 ##### Game Screenshots
-![Instruction page]()
-![Player registration page]()
-![Play area page]()
+![Instruction page](./GameScreenshots/1.png)
+![Player registration page](./GameScreenshots/2.png)
+![Play area page](./GameScreenshots/3.png)
 
 
 ### ***Future Updates***
