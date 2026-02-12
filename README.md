@@ -1,6 +1,7 @@
 # Sequence game Project
 
-## Start Date: 5/2/2026  Finished at 12/2/2026
+## Start Date: 5/2/2026  
+## End Date: 12/2/2026
 
 ### By: Fatema Mohamed Hasan BuSharar
 
