@@ -1,3 +1,6 @@
+/* =====================
+   Global Reset
+===================== */
 * {
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
@@ -6,17 +9,24 @@
 html, body {
   margin: 0;
   width: 100%;
+  height: 100%;
 }
 
+/* =====================
+   Body & Background
+===================== */
 body {
-  background: #f8fafc;
-  color: #0f172a;
+  background: radial-gradient(circle at top, #1c3d2b, #0b1f16);
+  color: #f8fafc;
 }
 
+/* =====================
+   Hero / Header
+===================== */
 .hero {
   width: 100%;
-  height: 280px;
-  background: linear-gradient(135deg, #d92ff7, #784178);
+  height: 220px;
+  background: linear-gradient(135deg, #2f5d3a, #1e3f2b);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,54 +34,52 @@ body {
 
 .hero-content {
   text-align: center;
-  color: white;
+  color: #f8fafc;
 }
 
 .hero h1 {
-  font-size: 48px;
   margin: 0;
+  font-size: 40px;
 }
 
 .hero p {
-  font-size: 18px;
-  opacity: 0.9;
+  margin-top: 6px;
+  opacity: 0.85;
 }
 
+/* =====================
+   Main Wrapper
+===================== */
 .wrapper {
-  padding: 60px 80px;
+  padding: 30px 20px;
+  max-width: 1000px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.section-title {
-  margin-bottom: 40px;
-}
-
-.section-title h2 {
-  font-size: 32px;
-  margin-bottom: 8px;
-}
-
-.section-title p {
-  font-size: 16px;
-  color: #475569;
-}
-
+/* =====================
+   Steps / Instruction Cards
+===================== */
 .steps {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .step-card {
-  background: white;
-  padding: 28px;
-  border-radius: 18px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+  background: #1e3a2a;
+  color: #f8fafc;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
   position: relative;
 }
 
 .step-card h3 {
-  margin-top: 10px;
-  margin-bottom: 14px;
+  margin-top: 0;
+  margin-bottom: 12px;
 }
 
 .step-card ul {
@@ -84,24 +92,31 @@ body {
   font-size: 15px;
 }
 
+/* Step Numbers */
 .step-number {
   position: absolute;
   top: -18px;
   right: 20px;
-  background: #ac42ac;
+  background: #15803d;
   color: white;
   padding: 10px 14px;
   border-radius: 12px;
   font-weight: 700;
 }
 
+/* Winning Step Card */
 .step-card.win {
-  background: linear-gradient(135deg, #ede9fe, #fce7f3);
+  background: radial-gradient(circle, #facc15, #ca8a04);
+  color: #1f2937;
 }
 
 .step-card.win .step-number {
-  background: #f59e0b;
+  background: #b91c1c;
 }
+
+/* =====================
+   CTA Button
+===================== */
 .cta {
   margin-top: 60px;
   text-align: center;
@@ -111,8 +126,37 @@ body {
   padding: 18px 40px;
   font-size: 18px;
   font-weight: 700;
-  border-radius: 16px;
-  background: linear-gradient(90deg, #d92ff7, #784178);
-  color: white;
+  border-radius: 12px;
+  background: #15803d;
+  color: #fff;
   text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.cta-button:hover {
+  background: #166534;
+  transform: translateY(-2px);
+}
+
+/* =====================
+   Responsive
+===================== */
+@media (max-width: 1024px) {
+  .wrapper {
+    padding: 20px 15px;
+  }
+  .steps {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 15px 10px;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }

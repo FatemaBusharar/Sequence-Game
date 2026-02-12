@@ -10,7 +10,7 @@ The game will show whose turn is first.
 Take Your Turn
 Tap a card in your hand.
 Place it on the board by tapping the corresponding spot.
-Your goal: form a row of five consecutive cards (horizontally, vertically, or diagonally).
+Your goal: form a row of four consecutive cards (horizontally, vertically, or diagonally).
 Block Opponents
 Watch other players’ moves.
 Use your cards to block their sequences while completing your own.
@@ -60,7 +60,7 @@ FUNCTION isValidMove(card, position)
 END FUNCTION
 
 FUNCTION checkNewSequence(board, player)
-    FOR each possible group of 5 cells
+    FOR each possible group of 4 cells
         IF all cells contain player.marker
            AND sequence not previously counted
             MARK sequence as counted
@@ -90,8 +90,8 @@ GAME LOOP
                 DRAW 1 card into currentPlayer.hand
 
             CHECK for new sequences
-                IF a new sequence of 5 is formed
-                    INCREASE currentPlayer.score by 1
+                IF a new sequence of 4 is formed
+                    INCREASE currentPlayer.score by 100
                     MARK sequence as counted
         ELSE
             SHOW "Invalid move"

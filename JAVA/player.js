@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const sequenceCountEl = document.getElementById('sequence-count')
     const drawBtn = document.getElementById('drawCardBtn')
     const ROWS = 15
-    const COLS = 6
+    const COLS = 7
 
     let turnTime = 15
     let timerInterval
@@ -19,7 +19,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const players = playerNames.map(name => ({
         name,
         score: 0,
-        cards: []
+        cards: [],
+        placedPositions: []  
     }))
 
     players.forEach(player => {
@@ -31,56 +32,48 @@ window.addEventListener('DOMContentLoaded', () => {
     deckCountEl.textContent = cardDeck.length
     sequenceCountEl.textContent = totalSequences
 
-    function getBoardGrid() {
-        const board = document.querySelectorAll('.board-card')
-        let grid = []
-        for (let i = 0; i < ROWS; i++) {
-            grid[i] = []
-            for (let j = 0; j < COLS; j++) grid[i][j] = board[i * COLS + j]
-        }
-        return grid
+    function getCellCoordinates(boardCard) {
+        const index = [...document.querySelectorAll('.board-card')].indexOf(boardCard)
+        const r = Math.floor(index / COLS)
+        const c = index % COLS
+        return { r, c }
     }
 
-    function checkSequencesFromCell(r, c, color, playerName) {
-        const grid = getBoardGrid()
+    function checkSequencesFromCell(r, c, playerName) {
+        const player = players.find(p => p.name === playerName)
+        console.log(`Checking sequences for ${playerName} at (${r}, ${c}), placedPositions: ${JSON.stringify(player.placedPositions)}`)
         let sequencesFound = 0
-        function checkDirection(dr, dc) {
-            for (let k = -4; k <= 0; k++) {
-                let cells = []
-                let valid = true
-                for (let i = 0; i < 5; i++) {
-                    let nr = r + (k + i) * dr
-                    let nc = c + (k + i) * dc
-                    if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) { 
-                        valid = false 
-                        break }
-                    let cell = grid[nr][nc]
-                    if (!cell.classList.contains(color)) { 
-                        valid = false 
-                        break }
-                    cells.push(cell)
+        const positions = player.placedPositions
+        const countedSequences = new Set()  
+        const directions = [
+            { dr: 0, dc: 1 },  
+            { dr: 1, dc: 0 },  
+            { dr: 1, dc: 1 },  
+            { dr: 1, dc: -1 } 
+        ]
+        directions.forEach(({ dr, dc }) => {
+            for (let i = 0; i < positions.length; i++) {
+                const pos1 = positions[i]
+                const pos2 = positions.find(p => p.r === pos1.r + dr && p.c === pos1.c + dc)
+                const pos3 = positions.find(p => p.r === pos1.r + 2 * dr && p.c === pos1.c + 2 * dc)
+                const pos4 = positions.find(p => p.r === pos1.r + 3 * dr && p.c === pos1.c + 3 * dc)
+                if (pos2 && pos3 && pos4) {
+                    const sequenceKey = `${pos1.r},${pos1.c}-${pos2.r},${pos2.c}-${pos3.r},${pos3.c}-${pos4.r},${pos4.c}`
+                    if (!countedSequences.has(sequenceKey)) {
+                        countedSequences.add(sequenceKey)
+                        console.log(`Sequence found in direction (${dr}, ${dc}) at (${pos1.r}, ${pos1.c})`)
+                        sequencesFound++
+                    }
                 }
-                if (!valid) continue
-                const alreadyCounted = cells.every(cell => cell.dataset.sequenceOwner === playerName)
-                if (alreadyCounted) continue
-                cells.forEach(cell => cell.dataset.sequenceOwner = playerName)
-                sequencesFound++
             }
-        }
-        checkDirection(0, 1)
-        checkDirection(1, 0)
-        checkDirection(1, 1)
-        checkDirection(1, -1)
+        })
+        console.log(`Total sequences found at (${r}, ${c}): ${sequencesFound}`)
         return sequencesFound
     }
 
     function updateHints() {
         document.querySelectorAll('.board-card').forEach(card => card.classList.remove('hint-highlight'))
         if (!selectedCard) return
-        const playerIndex = Number(selectedCard.dataset.player)
-        const playerColor = playerColors[playerIndex]
-        const playerName = players[playerIndex].name
-        const grid = getBoardGrid()
         document.querySelectorAll('.board-card').forEach(boardCard => {
             if (boardCard.classList.contains('taken') || boardCard.classList.contains('free')) return
             if (boardCard.dataset.value !== selectedCard.dataset.value || boardCard.dataset.suit !== selectedCard.dataset.suit) return
@@ -100,6 +93,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function endGame() {
+        console.log(`End game: checking scores...`)
+        players.forEach(player => console.log(`${player.name}: ${player.score}`))
         let winner = players.reduce((a, b) => a.score > b.score ? a : b)
         alert(`Winner is ${winner.name} with ${winner.score} points`)
     }
@@ -116,7 +111,7 @@ window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             overlay.classList.remove('show')
         }, duration)
-}
+    }
 
     function startTurnTimer() {
         clearInterval(timerInterval)
@@ -137,9 +132,6 @@ window.addEventListener('DOMContentLoaded', () => {
     function nextPlayer() {
         selectedCard = null
         currentPlayer = (currentPlayer + 1) % players.length
-        if (!canPlayerPlay(players[currentPlayer]) && cardDeck.length > 0 && !isBoardFull()) {
-            while (players[currentPlayer].cards.length < 7 && cardDeck.length > 0) player.cards.push(cardDeck.pop())
-        }
         renderPlayers()
         startTurnTimer()
     }
@@ -149,7 +141,11 @@ window.addEventListener('DOMContentLoaded', () => {
         players.forEach((player, index) => {
             const div = document.createElement('div')
             div.className = 'player-info'
+            if (index===currentPlayer){
+                div.classList.add('active')
+            }
             div.innerHTML = `<h2>${player.name}</h2><p>Score: ${player.score}</p><p>Cards: ${player.cards.length}</p><div class="cards-player"></div>`
+            console.log(`Rendering Player ${player.name}: score = ${player.score}`)
             playersContainer.appendChild(div)
             const cardsDiv = div.querySelector('.cards-player')
             player.cards.forEach((card, i) => {
@@ -159,11 +155,12 @@ window.addEventListener('DOMContentLoaded', () => {
                 c.dataset.suit = card.suit
                 c.dataset.index = i
                 c.dataset.player = index
-                if (index !== currentPlayer){
-                    c.classList.add('disabled','face-down')
+                if (index !== currentPlayer) {
+                    c.classList.add('disabled', 'face-down')
                     c.innerHTML = `<div class='center'></div>`
-                }
+                } else {
                     c.innerHTML = `<div class='corner top'>${card.value} ${card.suit}</div><div class='center'>${card.suit}</div><div class='corner bottom'>${card.value} ${card.suit}</div>`
+                }
                 cardsDiv.appendChild(c)
                 c.addEventListener('click', () => {
                     if (index !== currentPlayer) return
@@ -189,14 +186,21 @@ window.addEventListener('DOMContentLoaded', () => {
             const playerColor = playerColors[p]
             const playerName = players[p].name
             boardCard.classList.add('taken', playerColor)
+            boardCard.dataset.sequenceOwner = playerName
             players[p].cards.splice(Number(selectedCard.dataset.index), 1)
-            const grid = getBoardGrid()
-            let r = Math.floor([...document.querySelectorAll('.board-card')].indexOf(boardCard) / COLS)
-            let c = [...document.querySelectorAll('.board-card')].indexOf(boardCard) % COLS
-            const seq = checkSequencesFromCell(r, c, playerColor, playerName)
+            const { r, c } = getCellCoordinates(boardCard)
+            players[p].placedPositions.push({ r, c })
+            console.log(`Player ${playerName} placedPositions: ${JSON.stringify(players[p].placedPositions)}`)
+            console.log(`Placed at (${r}, ${c})`)
+            console.log(`Before: Player ${p} score: ${players[p].score}`)
+            const seq = checkSequencesFromCell(r, c, playerName)
+            console.log(`seq f:${seq},player: ${playerName}`)
             if (seq > 0) {
-                players[p].score += seq * 100
+                players[p].score += seq * 100  
                 totalSequences += seq
+                console.log(`After: Player ${p} score: ${players[p].score}, totalSequences: ${totalSequences}`)
+            } else {
+                console.log(`No points added: seq = ${seq}`)
             }
             selectedCard = null
             nextPlayer()
@@ -209,23 +213,33 @@ window.addEventListener('DOMContentLoaded', () => {
         const player = players[currentPlayer]
         if (player.cards.length >= 7) { 
             showMessage('You already have 7 cards, cannot draw more') 
-            return }
+            return 
+        }
         const freeBoard = document.querySelectorAll('.board-card:not(.taken):not(.free)')
         const playableCards = player.cards.filter(card => [...freeBoard].some(boardCard => boardCard.dataset.value === card.value && boardCard.dataset.suit === card.suit))
         if (playableCards.length > 0) { 
             showMessage('You still have playable cards') 
-            return }
+            return 
+        }
         if (cardDeck.length === 0) { 
             showMessage('No more cards in the deck to draw') 
-            return }
-        player.cards.push(cardDeck.pop())
+            return 
+        }
+        while (player.cards.length < 7 && cardDeck.length > 0) {
+            player.cards.push(cardDeck.pop())
+        }
         renderPlayers()
     })
 
-    document.getElementById('resetGame').onclick = () => location.reload()
+    document.getElementById('resetGame').onclick = () => {
+        document.querySelectorAll('.board-card').forEach(card => {
+            card.dataset.sequenceOwner = ''  
+            card.classList.remove('taken', 'red', 'blue', 'green', 'yellow')
+        })
+        players.forEach(player => player.placedPositions = [])
+        location.reload()
+    }
 
     renderPlayers()
     startTurnTimer()
-
 })
-

@@ -1,10 +1,10 @@
 # Sequence game Project
 
-## Date: 2/5/2026
+## Start Date: 5/2/2026  Finished at 12/2/2026
 
 ### By: Fatema Mohamed Hasan BuSharar
 
-#### [GitHub](https://github.com/FatemaBuSharar) | [LinkedIn](https://www.linkedin.com/in/fatema-mohamed-busharar/)
+#### [GitHub](https://github.com/FatemaBuSharar) | [LinkedIn](https://www.linkedin.com/in/fatemaBusharar/)
 ***
 
 ### ***Description***
@@ -15,10 +15,8 @@
 * Game Engine / Frontend
   * HTML
   * JavaScript 
-* Backend / Cloud (optional)
-  * Node.js + MongoDB (custom backend)
 * Design & Media Tools
-  * Photoshop / Illustrator / Figma (graphics & UI)
+  * CSS / Figma (graphics & UI)
 ***
 
 ### ***Getting Started for players***
@@ -35,7 +33,7 @@
 ##### Take Your Turn
 * Tap a card in your hand.
 * Place it on the board by tapping the corresponding spot.
-* Your goal: form a row of five consecutive cards (horizontally, vertically, or diagonally).
+* Your goal: form a row of four consecutive cards (horizontally, vertically, or diagonally).
 ##### Block Opponents
 * Watch other players’ moves.
 * Use your cards to block their sequences while completing your own.
@@ -43,8 +41,17 @@
 * After placing a card, you automatically get a new one from the deck.
 * Keep your hand full for the next turn.
 ##### Win the Game
-* Be the first to complete a sequence of five cards.
+* Be the first to complete a sequence of four cards.
+* let your Score rises quickly
 * Celebrate your victory and challenge friends to a rematch!
+
+### ***Puzzle Images***
+
+##### Game Screenshots
+![Instruction page]()
+![Player registration page]()
+![Play area page]()
+
 
 ### ***Future Updates***
 
